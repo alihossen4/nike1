@@ -3,10 +3,9 @@ import express from 'express';
 import { WHITELIST } from './constants.js';
 import cookieParser from 'cookie-parser';
 import errorHandler from './middlewares/errorHandler.middleware.js';
-import { HealthCheck } from './controllers/healthCheck.controller.js';
 import healthCheckRoute from './routes/healthCheck.route.js';
 import userRoute from './routes/user.route.js';
-import { asyncHandler } from './utils/asyncHandler.js';
+
 const app = express();
 
 app.use(express.json());
