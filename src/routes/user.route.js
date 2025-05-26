@@ -1,10 +1,11 @@
 import e from 'express'
-import { signup } from '../controllers/user/user.controller.js'
+import { signup, verifyMail } from '../controllers/user/user.controller.js'
 import validationMiddleware from '../middlewares/validation.middleware.js';
 import {userSignupSchema}  from '../validators/user.validator.js';
 
 const router = e.Router();
 router.post("/users/signup",validationMiddleware(userSignupSchema), signup);
+router.get("/users/verify/", verifyMail);
 
 // {
 //     // console.log(req.body);

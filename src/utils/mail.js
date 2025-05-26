@@ -1,6 +1,8 @@
 import nodemailer from 'nodemailer';
 import ApiError from './apiError.js'
 import {MAIL_PASS, MAIL_PORT, MAIL_SERVICE, MAIL_USER, NODE_ENV} from '../constants.js'
+// import verifyUrl
+// import { verify } from 'jsonwebtoken';
 import Mailgen from 'mailgen';
 // Create a test account or replace with real credentials.
 async function sendMail(options){
@@ -51,7 +53,7 @@ function verifyEmail(name, verifyUrl){
         button:{
           color: "#22BC66",
           text: "Confirm Your account",
-          links: "https://nike.com/verify",
+          link: verifyUrl,
         }
       }
     }
