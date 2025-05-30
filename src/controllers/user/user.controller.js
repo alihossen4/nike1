@@ -88,5 +88,12 @@ const signin = asyncHandler(async(req, res)=>{
   .status(200).json(ApiSuccess.ok('User signed in', {accessToken, refreshToken}))
 });
 
-export { signup , verifyMail, signin};
+const signout = asyncHandler(async (_req, res) =>{
+  return res
+    .clearCookie('accessToken')
+    .clearCookie('refreshToken')
+    .status(200)
+    .json(ApiSuccess.ok('User signed out'))
+})
+export { signup , verifyMail, signin, signout};
  //🦸🦸
