@@ -1,7 +1,7 @@
 import mongoose, {Schema} from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from 'jsonwebtoken';
-import { JWT_EXPIRES, JWT_SECRET } from "../constants.js";
+import { ACCESS_TOKEN, ACCESS_TOKEN_EXPIRES, JWT_EXPIRES, JWT_SECRET, RESFRESH_TOKEN_EXPIRES, RESFRESH_TOKEN_SECRET } from "../constants.js";
 const userSchema = new Schema(
     {
         username : {
@@ -57,6 +57,16 @@ userSchema.methods.jwtToken = function(){
         { id: this._id, username:this.username, email: this.email },
         JWT_SECRET,
         {expiresIn: JWT_EXPIRES}
-    )
-}   
+    );
+};
+userSchema.methods.accessToken = function(){
+    return jwt.sign({id:this._id, username: this.username, email:this.email}, ACCESS_TOKEN,{
+        expiresIn: ACCESS_TOKEN_EXPIRES
+    })
+}  
+userSchema.methods.refreshToken = function(){
+    return jwt.sign({id:this._id, username: this.username, email:this.email}, RESFRESH_TOKEN_SECRET,{
+        expiresIn: RESFRESH_TOKEN_EXPIRES
+    })
+}  
 export const User = mongoose.model.User || mongoose.model('User', userSchema)

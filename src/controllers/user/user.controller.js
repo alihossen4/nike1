@@ -5,6 +5,7 @@ import ApiSuccess from '../../utils/apiSuccess.js';
 import { APP_URL, JWT_SECRET } from '../../constants.js';
 import { sendMail, verifyEmail } from '../../utils/mail.js';
 import jwt from 'jsonwebtoken';
+import cookie from 'cookie-parser';
 // const asyncHandler = (fn) =>(req, res, next ) => Promise.resolve(fn(req, res, next)).catch(err => next(err))
 const signup = asyncHandler(async (req, res) => {
   console.log(req.body);
@@ -51,7 +52,7 @@ const verifyMail = asyncHandler(async (req, res) =>{
     '-__v -password -createdAt -updatedAt -passwordResetToken -passwordResetExpires'
   );
   if(!user){
-    throw ApiError.badRequest('User not found')
+    throw ApiError.notFound('User not found')
   }
   if(user.isVerified){
     return res.status(200).json(ApiSuccess.ok('User already verifid', user))
@@ -63,5 +64,29 @@ const verifyMail = asyncHandler(async (req, res) =>{
   }
 });
 
-export { signup , verifyMail};
+const signin = asyncHandler(async(req, res)=>{
+  const {email, password} = req.body;
+  const user = await User.findOne({email});
+  if(!user){
+    throw ApiError.notFound('Invalid credentials');
+  }
+  const isMatch = await user.comparePassword(password);
+  if(!isMatch){
+    throw ApiError.notFound('Invalid credentials');
+  }
+  const accessToken = user.accessToken();
+  const refreshToken = user.refreshToken();
+  const cookieOptions = {
+    httpOnly : true,
+    secure: true,
+    sameSite: 'strict',
+  };
+
+  return res
+  .cookie('accessToken', accessToken, {...cookieOptions, maxAge: 24*60*60*1000})
+  .cookie('refreshToken', refreshToken, {...cookieOptions, maxAge: 30*24*60*60*1000})
+  .status(200).json(ApiSuccess.ok('User signed in', {accessToken, refreshToken}))
+});
+
+export { signup , verifyMail, signin};
  //🦸🦸
